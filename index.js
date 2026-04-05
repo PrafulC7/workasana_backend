@@ -268,12 +268,41 @@ app.put("/projects/:id", async (req, res) => {
 // ==============================
 app.delete("/projects/:id", async (req, res) => {
   try {
-    await Project.findByIdAndDelete(req.params.id);
-    res.json({ message: "Project deleted successfully" });
+    const projectId = req.params.id;
+
+    // 👇 delete all tasks under this project
+    await Task.deleteMany({ project: projectId });
+
+    // 👇 delete the project
+    const deletedProject = await Project.findByIdAndDelete(projectId);
+
+    if (!deletedProject) {
+      return res.status(404).json({ message: "Project not found" });
+    }
+
+    res.json({ message: "Project and related tasks deleted successfully" });
+
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 });
+
+// ==============================
+// GET Project Details
+// ==============================
+
+app.get("/tasks/project/:projectId", async (req, res) => {
+  try {
+    const tasks = await Task.find({ project: req.params.projectId })
+      .populate("owners", "name")
+      .populate("team", "name");
+
+    res.json(tasks);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
 // ==============================
 // GET all tasks
 // ==============================
