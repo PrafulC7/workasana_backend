@@ -5,11 +5,11 @@ require("dotenv").config();
 const mongoUri = process.env.MONGODB
 const initializeDatabase = async () => {
   try {
-    if (!process.env.MONGODB) {
+    if (!mongoUri) {
       throw new Error("MONGODB URI is missing");
     }
 
-    await mongoose.connect(process.env.MONGODB);
+    await mongoose.connect(mongoUri);
 
     console.log("Connected to Database");
   } catch (error) {
