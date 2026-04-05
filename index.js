@@ -26,6 +26,7 @@ initializeDatabase();
 
 app.get("/", async (req,res)=>{
   try{
+    await initializeDatabase();
 res.send("Workasana Backend")
   }catch(err){
 res.status(404).json({error:"page not found"})
@@ -44,6 +45,7 @@ res.status(404).json({error:"page not found"})
 // ==============================
 app.get("/users", async (req, res) => {
   try {
+    await initializeDatabase();
     const users = await User.find();
     res.status(200).json(users);
   } catch (error) {
@@ -56,6 +58,7 @@ app.get("/users", async (req, res) => {
 // ==============================
 app.get("/users/:id", async (req, res) => {
   try {
+    await initializeDatabase();
     const user = await User.findById(req.params.id);
 
     if (!user) {
@@ -73,6 +76,7 @@ app.get("/users/:id", async (req, res) => {
 // ==============================
 app.post("/users", async (req, res) => {
   try {
+    await initializeDatabase();
     const { name, email } = req.body;
 
     const newUser = new User({
@@ -92,6 +96,7 @@ app.post("/users", async (req, res) => {
 // ==============================
 app.put("/users/:id", async (req, res) => {
   try {
+    await initializeDatabase();
     const { name, email } = req.body;
 
     const updatedUser = await User.findByIdAndUpdate(
@@ -115,6 +120,7 @@ app.put("/users/:id", async (req, res) => {
 // ==============================
 app.get("/teams", async (req, res) => {
   try {
+    await initializeDatabase();
     const teams = await Team.find();
     res.status(200).json(teams);
   } catch (error) {
@@ -127,6 +133,7 @@ app.get("/teams", async (req, res) => {
 // ==============================
 app.get("/teams/:id", async (req, res) => {
   try {
+    await initializeDatabase();
     const team = await Team.findById(req.params.id);
 
     if (!team) {
@@ -144,6 +151,7 @@ app.get("/teams/:id", async (req, res) => {
 // ==============================
 app.post("/teams", async (req, res) => {
   try {
+    await initializeDatabase();
     const { name, description } = req.body;
 
     const newTeam = new Team({
@@ -163,6 +171,7 @@ app.post("/teams", async (req, res) => {
 // ==============================
 app.put("/teams/:id", async (req, res) => {
   try {
+    await initializeDatabase();
     const { name, description } = req.body;
 
     const updatedTeam = await Team.findByIdAndUpdate(
@@ -186,6 +195,7 @@ app.put("/teams/:id", async (req, res) => {
 // ==============================
 app.delete("/teams/:id", async (req, res) => {
   try {
+    await initializeDatabase();
     await Team.findByIdAndDelete(req.params.id);
     res.json({ message: "Team deleted successfully" });
   } catch (err) {
@@ -198,6 +208,7 @@ app.delete("/teams/:id", async (req, res) => {
 // ==============================
 app.get("/projects", async (req, res) => {
   try {
+    await initializeDatabase();
     const projects = await Project.find().sort({ createdAt: -1 });
     res.status(200).json(projects);
   } catch (error) {
@@ -210,6 +221,7 @@ app.get("/projects", async (req, res) => {
 // ==============================
 app.get("/projects/:id", async (req, res) => {
   try {
+    await initializeDatabase();
     const project = await Project.findById(req.params.id);
 
     if (!project) {
@@ -227,6 +239,7 @@ app.get("/projects/:id", async (req, res) => {
 // ==============================
 app.post("/projects", async (req, res) => {
   try {
+    await initializeDatabase();
     const { name, description } = req.body;
 
     const newProject = new Project({
@@ -246,6 +259,7 @@ app.post("/projects", async (req, res) => {
 // ==============================
 app.put("/projects/:id", async (req, res) => {
   try {
+    await initializeDatabase();
     const { name, description } = req.body;
 
     const updatedProject = await Project.findByIdAndUpdate(
@@ -268,6 +282,7 @@ app.put("/projects/:id", async (req, res) => {
 // ==============================
 app.delete("/projects/:id", async (req, res) => {
   try {
+    await initializeDatabase();
     const projectId = req.params.id;
 
     // 👇 delete all tasks under this project
@@ -293,6 +308,7 @@ app.delete("/projects/:id", async (req, res) => {
 
 app.get("/tasks/project/:projectId", async (req, res) => {
   try {
+    await initializeDatabase();
     const tasks = await Task.find({ project: req.params.projectId })
       .populate("owners", "name")
       .populate("team", "name");
@@ -308,6 +324,7 @@ app.get("/tasks/project/:projectId", async (req, res) => {
 // ==============================
 app.get("/tasks", async (req, res) => {
   try {
+    await initializeDatabase();
     const tasks = await Task.find()
       .populate("project", "name")
       .populate("team", "name")
@@ -325,6 +342,7 @@ app.get("/tasks", async (req, res) => {
 // ==============================
 app.get("/tasks/:id", async (req, res) => {
   try {
+    await initializeDatabase();
     const task = await Task.findById(req.params.id)
       .populate("project", "name")
       .populate("team", "name")
@@ -345,6 +363,7 @@ app.get("/tasks/:id", async (req, res) => {
 // ==============================
 app.post("/tasks", async (req, res) => {
   try {
+    await initializeDatabase();
     const {
       name,
       project,
@@ -382,6 +401,7 @@ app.post("/tasks", async (req, res) => {
 
 app.delete("/tasks/:id", async (req, res) => {
   try {
+    await initializeDatabase();
     await Task.findByIdAndDelete(req.params.id);
     res.json({ message: "Task deleted successfully" });
   } catch (err) {
@@ -394,6 +414,7 @@ app.delete("/tasks/:id", async (req, res) => {
 // ==============================
 app.put("/tasks/:id", async (req, res) => {
   try {
+    await initializeDatabase();
     const updatedTask = await Task.findByIdAndUpdate(
       req.params.id,
       { ...req.body, updatedAt: Date.now() },
@@ -415,6 +436,7 @@ app.put("/tasks/:id", async (req, res) => {
 
 app.put("/tasks/:id/status", async (req, res) => {
   try {
+    await initializeDatabase();
     const { status } = req.body;
 
     const updateData = { status };
@@ -444,6 +466,7 @@ app.put("/tasks/:id/status", async (req, res) => {
 // ==============================
 app.get("/tags", async (req, res) => {
   try {
+    await initializeDatabase();
     const tags = await Tag.find().sort({ name: 1 });
     res.status(200).json(tags);
   } catch (error) {
@@ -456,6 +479,7 @@ app.get("/tags", async (req, res) => {
 // ==============================
 app.get("/tags/:id", async (req, res) => {
   try {
+    await initializeDatabase();
     const tag = await Tag.findById(req.params.id);
 
     if (!tag) {
@@ -473,6 +497,7 @@ app.get("/tags/:id", async (req, res) => {
 // ==============================
 app.post("/tags", async (req, res) => {
   try {
+    await initializeDatabase();
     const { name } = req.body;
 
     const newTag = new Tag({ name });
@@ -494,6 +519,7 @@ app.post("/tags", async (req, res) => {
 // ==============================
 app.put("/tags/:id", async (req, res) => {
   try {
+    await initializeDatabase();
     const { name } = req.body;
 
     const updatedTag = await Tag.findByIdAndUpdate(
